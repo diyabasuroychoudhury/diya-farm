@@ -1,110 +1,140 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue } from "framer-motion";
 
 const animals = [
   {
-    id: "shepherd",
+    id: "sheep",
     emoji: "🐑",
     name: "The Shepherd",
-    title: "Operations & Trust",
+    role: "Operations & Trust",
+    x: "20%",
+    y: "55%",
+    drift: 8,
+    speed: 0.4,
     story:
-      "I started my career in hospitality and frontline operations, where trust is built or broken in seconds. Working closely with customers, policies, and teams taught me how systems behave under pressure.",
+      "I started in hospitality and frontline operations, where trust is built or broken in seconds.",
     insight:
-      "Operational trust is not about perfection — it’s about consistency at scale. Products that ignore frontline realities fail quietly.",
+      "Systems fail when they ignore the edges. Operational trust scales through consistency, not perfection.",
   },
   {
     id: "owl",
     emoji: "🦉",
     name: "The Owl",
-    title: "Strategic Thinking",
+    role: "Strategic Thinking",
+    x: "55%",
+    y: "18%",
+    drift: 5,
+    speed: 0.2,
     story:
-      "Over time, I gravitated toward roles involving loyalty, compliance, and risk — places where second‑order effects matter more than surface metrics.",
+      "Working in loyalty, compliance, and risk taught me to care about second-order effects.",
     insight:
-      "Strategy only works when it survives contact with real constraints. Clear framing beats clever solutions.",
+      "Good strategy survives contact with reality. Clear framing beats clever solutions.",
   },
   {
     id: "fox",
     emoji: "🦊",
     name: "The Fox",
-    title: "Career Pivot",
+    role: "Career Pivot",
+    x: "70%",
+    y: "60%",
+    drift: 14,
+    speed: 0.7,
     story:
-      "I’m intentionally moving toward product and revenue‑adjacent roles, building technical fluency while staying grounded in execution.",
+      "I’m intentionally moving into product and revenue roles while staying grounded in execution.",
     insight:
-      "Momentum comes from acting before you feel fully ready — then correcting fast.",
+      "Momentum comes from acting before you feel ready — then correcting fast.",
   },
   {
     id: "horse",
     emoji: "🐎",
     name: "The Horse",
-    title: "Resilience",
+    role: "Resilience",
+    x: "35%",
+    y: "70%",
+    drift: 10,
+    speed: 0.5,
     story:
-      "A serious ACL and meniscus injury forced me to slow down. It sharpened my thinking and made intention more important than speed.",
+      "A serious ACL and meniscus injury forced me to slow down and think more deliberately.",
     insight:
-      "Sustainable progress is quiet, deliberate, and repeatable.",
+      "Sustainable progress values direction over speed.",
   },
 ];
 
-export default function FarmWebsite() {
+export default function FarmWorld() {
   const [active, setActive] = useState(null);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
 
   return (
-    <main className="min-h-screen bg-green-50 p-8 font-sans">
-      <section className="max-w-5xl mx-auto">
-        <h1 className="text-4xl font-bold mb-2">Diya Roy</h1>
-        <p className="text-lg text-gray-700 mb-10">
-          Welcome to my farm — a living system of operations, strategy, and growth.
+    <main
+      className="w-screen h-screen overflow-hidden"
+      onMouseMove={(e) => {
+        mouseX.set(e.clientX);
+        mouseY.set(e.clientY);
+      }}
+    >
+      {/* SKY */}
+      <div className="absolute inset-0 bg-gradient-to-b from-sky-200 via-green-100 to-green-300" />
+
+      {/* TITLE */}
+      <div className="absolute top-8 left-1/2 -translate-x-1/2 text-center z-10">
+        <h1 className="text-4xl font-bold">Diya Roy</h1>
+        <p className="text-gray-700">
+          A living system of operations, strategy, and growth
         </p>
+        <p className="text-sm text-gray-500 mt-2">
+          (Try moving your cursor)
+        </p>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {animals.map((animal) => (
-            <motion.div
-              key={animal.id}
-              whileHover={{ scale: 1.04 }}
-              className="cursor-pointer bg-white rounded-2xl shadow p-6"
-              onClick={() => setActive(animal)}
-            >
-              <div className="text-3xl mb-2">{animal.emoji}</div>
-              <h2 className="text-xl font-semibold">{animal.name}</h2>
-              <p className="text-sm text-gray-600">{animal.title}</p>
-            </motion.div>
-          ))}
-        </div>
+      {/* ANIMALS */}
+      {animals.map((a) => (
+        <motion.div
+          key={a.id}
+          className="absolute text-5xl cursor-pointer select-none"
+          style={{ left: a.x, top: a.y }}
+          animate={{
+            y: [0, -a.drift, 0],
+          }}
+          transition={{
+            duration: 4 + a.speed * 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          whileHover={{ scale: 1.3 }}
+          onClick={() => setActive(a)}
+        >
+          {a.emoji}
+        </motion.div>
+      ))}
 
-        <section className="mt-16">
-          <h2 className="text-2xl font-semibold mb-4">🪵 The Thinking Barn</h2>
-          <ul className="list-disc pl-6 text-gray-700 space-y-2">
-            <li>Why frontline constraints should shape product decisions</li>
-            <li>What hospitality taught me about trust systems</li>
-            <li>Why readiness is overrated in early careers</li>
-          </ul>
-        </section>
-      </section>
-
+      {/* MODAL */}
       <AnimatePresence>
         {active && (
           <motion.div
-            className="fixed inset-0 bg-black/40 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setActive(null)}
           >
             <motion.div
+              className="bg-white rounded-2xl p-8 max-w-lg text-center"
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.9 }}
-              className="bg-white rounded-2xl p-8 max-w-lg"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="text-3xl mb-2">{active.emoji}</div>
-              <h3 className="text-2xl font-semibold mb-1">{active.name}</h3>
-              <p className="text-sm text-gray-500 mb-4">{active.title}</p>
+              <div className="text-4xl mb-2">{active.emoji}</div>
+              <h2 className="text-2xl font-semibold">{active.name}</h2>
+              <p className="text-sm text-gray-500 mb-4">{active.role}</p>
               <p className="text-gray-700 mb-4">{active.story}</p>
-              <p className="text-gray-800 font-medium">{active.insight}</p>
+              <p className="font-medium text-gray-800">{active.insight}</p>
+
               <button
-                className="mt-6 px-4 py-2 rounded-xl bg-green-600 text-white"
+                className="mt-6 px-4 py-2 bg-green-600 text-white rounded-xl"
                 onClick={() => setActive(null)}
               >
                 Close
